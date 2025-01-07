@@ -132,6 +132,11 @@ vim.api.nvim_create_autocmd({ 'BufNewFile', 'BufRead' }, {
   command = ':set filetype=glsl',
 })
 
+vim.api.nvim_create_autocmd({ 'BufNewFile', 'BufRead' }, {
+  pattern = { 'todo.txt', 'done.txt' },
+  command = ':set filetype=todotxt',
+})
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
@@ -556,6 +561,7 @@ require('lazy').setup({
           },
         },
         clangd = {},
+        ocamllsp = {},
         -- hls = {},
         -- gopls = {},
         -- pyright = {},
@@ -783,6 +789,7 @@ require('lazy').setup({
     -- change the command in the config to whatever the name of that colorscheme is.
     --
     -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
+
     'folke/tokyonight.nvim',
     priority = 1000, -- Make sure to load this before all the other start plugins.
     init = function()
@@ -846,7 +853,7 @@ require('lazy').setup({
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
+      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc', 'todotxt' },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
@@ -883,6 +890,28 @@ require('lazy').setup({
     keys = {
       { '<leader>lg', '<cmd>LazyGit<cr>', desc = 'LazyGit' },
     },
+  },
+  {
+    --'phrmendes/todotxt.nvim',
+    dir = '~/Developer/todotxt.nvim/',
+    dependencies = { 'nvim-treesitter/nvim-treesitter' },
+    config = function()
+      require('todotxt').setup {
+        todotxt = '/Users/azulay/Dropbox/notes/todo.txt',
+        donetxt = '/Users/azulay/Dropbox/notes/done.txt',
+      }
+
+      local todotxt = require 'todotxt'
+      -- TODO: make this open in the current window not in a split
+      --vim.keymap.set('n', '<leader>tt', todotxt.open_todo_file, { desc = 'Open [T]todotxt' })
+      vim.keymap.set('n', '<leader>tc', todotxt.toggle_todo_state, { desc = 'Toggle [C]omplete' })
+      vim.keymap.set('n', '<leader>td', todotxt.move_done_tasks, { desc = 'Move to [D]one' })
+      vim.keymap.set('n', '<leader>ts', todotxt.sort_tasks, { desc = '[S]ort tasks' })
+      vim.keymap.set('n', '<leader>tp', todotxt.sort_tasks_by_priority, { desc = 'Sort by [P]riority' })
+      vim.keymap.set('n', '<leader>tr', todotxt.sort_tasks_by_project, { desc = 'Sort by P[R]oject' })
+      vim.keymap.set('n', '<leader>to', todotxt.sort_tasks_by_context, { desc = 'Sort by C[O]ntext' })
+      vim.keymap.set('n', '<leader>ta', todotxt.capture_todo, { desc = '[A]dd New Task' })
+    end,
   },
 
   -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
